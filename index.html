@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>?¸ä? CRM ??Underwriting Comparison</title>
+  <link rel="stylesheet" href="styles.css?v=20260903-1740" />
+  <script src="engine/rule-engine.js?v=20260903-1740"></script>
+  <script src="sample-rules.js?v=20260903-1740"></script>
+  <script src="disclaimer.js?v=20260903-1740"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>?Œ¸ ?¸ä? CRM <span class="version">v1.5 prototype</span></h1>
+      <p class="subtitle">è¼¸å…¥å®¢æˆ¶è³‡æ? ???³æ?æ¯”è? Sun Life / CTF ??product ?…æ ¸ä¿æ±ºå®?/p>
+    </header>
+
+    <main>
+      <!-- ?€?€?€ Step Indicator ?€?€?€ -->
+      <div class="step-indicator">
+        <div class="step active" data-step="1">
+          <div class="step-num">1</div>
+          <div class="step-label">å®¢æˆ¶è³‡æ?</div>
+        </div>
+        <div class="step-arrow">??/div>
+        <div class="step" data-step="2">
+          <div class="step-num">2</div>
+          <div class="step-label">?…å²?å·</div>
+        </div>
+        <div class="step-arrow">??/div>
+        <div class="step" data-step="3">
+          <div class="step-num">3</div>
+          <div class="step-label">çµæ??±å?</div>
+        </div>
+      </div>
+
+      <!-- ?€?€?€ Wizard Panes ?€?€?€ -->
+      <div class="wizard">
+        <!-- Step 1: Client Profile -->
+        <section class="step-pane" data-step="1">
+          <h2>?‘¤ Step 1 ??å®¢æˆ¶?ºæœ¬è³‡æ?</h2>
+          <div class="form-grid">
+            <label>
+              <span>å§“å?/ç·¨è?</span>
+              <input type="text" id="clientName" placeholder="ä¾‹ï??³å¤§?? />
+            </label>
+            <label>
+              <span>å¹´é½¡</span>
+              <input type="number" id="age" min="0" max="100" value="40" />
+            </label>
+            <label>
+              <span>?§åˆ¥</span>
+              <select id="sex">
+                <option value="M">??/option>
+                <option value="F">å¥?/option>
+              </select>
+            </label>
+            <label>
+              <span>èº«é? (cm)</span>
+              <input type="number" id="height_cm" min="50" max="250" value="170" />
+            </label>
+            <label>
+              <span>é«”é? (kg)</span>
+              <input type="number" id="weight_kg" min="10" max="300" value="70" />
+            </label>
+            <label>
+              <span>BMIï¼ˆè‡ª?•è?ç®—ï?</span>
+              <input type="text" id="bmi_display" disabled value="?? />
+            </label>
+            <label>
+              <span>?¸ç?</span>
+              <select id="smoker">
+                <option value="never">å¾žä?</option>
+                <option value="former">å·²æ?</option>
+                <option value="current">?¾å¸</option>
+              </select>
+            </label>
+            <label>
+              <span>å±…ä???/span>
+              <select id="country">
+                <option value="HK">é¦™æ¸¯</option>
+                <option value="MO">æ¾³é?</option>
+                <option value="CN">ä¸­å??§åœ°</option>
+                <option value="OTHER">æµ·å?</option>
+              </select>
+            </label>
+            <label>
+              <span>ç°½ç?é¡?(HK$)</span>
+              <input type="number" id="sum_assured" min="0" value="1000000" />
+            </label>
+          </div>
+        </section>
+
+        <!-- Step 2: Conditions Checklist -->
+        <section class="step-pane" data-step="2" style="display:none">
+          <h2>?¥ Step 2 ???…å²?å·</h2>
+          <p class="muted" style="margin-bottom:1rem;">?”é¸å®¢æˆ¶?‰å??…å²ï¼Œä¸¦å¡«å¯«?¸é?ç´°ç?ï¼ˆå¹´é½¡ã€æŽ§?¶ç?åº¦ã€ç?ç¨‹ç?ï¼‰ã€?/p>
+          <div id="conditionsContainer">
+            <p class="muted">è¼‰å…¥æ¢ä»¶ä¸­â€?/p>
+          </div>
+        </section>
+
+        <!-- Step 3: Review + Results -->
+        <section class="step-pane" data-step="3" style="display:none">
+          <h2>?? Step 3 ???¸ä?çµæ?</h2>
+          <div id="reviewSummary" style="margin-bottom: 1rem;"></div>
+          <div id="resultsSummary"></div>
+          <table id="resultsTable">
+            <thead>
+              <tr>
+                <th>ä¿éšª?¬å¸</th>
+                <th>?€ä½³æ±ºå®?/th>
+                <th>?€ä½?product</th>
+                <th>?¥å???/th>
+                <th>? è²» %</th>
+                <th>?æ•¸</th>
+                <th>?’ä? / ?±ç½®</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="result-actions">
+            <button id="exportBtn" class="ghost" style="display:none">?? è¤‡è£½çµæ? JSON</button>
+            <button id="printBtn" class="ghost" style="display:none">?–¨ï¸?ä¸‹è? PDF ?±å?</button>
+            <button id="historyBtn" class="ghost">?? æ­·å²è¨˜é?</button>
+          </div>
+          <div class="disclaimer">
+            ? ï? <strong>?è²¬?²æ?</strong>ï¼šæœ¬ç³»çµ±?ªä??§éƒ¨?ƒè€ƒï?å¯¦é??¸ä?æ±ºå?ä»¥ä??ªå…¬?¸ç‚ºæº–ã€?            å®¢æˆ¶è³‡æ?å±¬æ?å¯†ï?è«‹éµå®?PDPO ?•ç???          </div>
+        </section>
+
+        <!-- ?€?€?€ Wizard Navigation ?€?€?€ -->
+        <div class="wizard-nav no-print">
+          <button id="wizardPrev" class="ghost" style="display:none">??ä¸Šä?æ­?/button>
+          <button id="wizardNext" class="primary">ä¸‹ä?æ­???/button>
+          <button id="wizardCalc" class="primary" style="display:none">?? è¨ˆç??¸ä?æ±ºå?</button>
+          <button id="wizardReset" class="ghost">?? ?æ–°?‹å?</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="no-print">
+      <p>?Œ¸ Built by å°èŠ± for Alan?é? Â· 2026-09-03 Â· <a href="https://github.com/alan9820/underwriting-crm/blob/main/docs/spec.md">Spec</a></p>
+    </footer>
+  </div>
+
+  <div class="history-panel no-print" id="historyPanel"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
