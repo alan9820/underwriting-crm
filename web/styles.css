@@ -1,0 +1,493 @@
+/* 核保 CRM — minimal CSS, no framework */
+:root {
+  --bg: #0a0e1a;
+  --bg-card: #131826;
+  --bg-card-2: #1a2235;
+  --border: #2a3450;
+  --text: #e5e9f0;
+  --text-muted: #8b95a8;
+  --accent: #ffd700;
+  --accent-dim: #d4af00;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --orange: #fb923c;
+  --red: #ef4444;
+  --gray: #6b7280;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Microsoft JhengHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+h1 .version {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: normal;
+  margin-left: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ─── Step Indicator ─── */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.step.active {
+  background: var(--bg-card-2);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.step.active .step-num {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.step.completed {
+  color: var(--green);
+}
+
+.step.completed .step-num {
+  background: var(--green);
+  color: var(--bg);
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.step-arrow {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+/* ─── Wizard ─── */
+.wizard {
+  position: relative;
+}
+
+.step-pane {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.step-pane h2 {
+  color: var(--accent);
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Form ─── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+label span { font-weight: 500; }
+
+input, select, textarea {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+input:disabled {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.condition-block {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.condition-block label.cond-toggle {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.condition-block label.cond-toggle input { width: auto; margin-right: 0.5rem; }
+
+.condition-details {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  display: none;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.condition-block.active .condition-details { display: grid; }
+
+/* ─── Wizard Nav ─── */
+.wizard-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+}
+
+button:hover { opacity: 0.9; }
+button:active { transform: scale(0.98); }
+button:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+button.ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Results Table ─── */
+#resultsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.92rem;
+}
+
+#resultsTable th, #resultsTable td {
+  text-align: left;
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+#resultsTable th {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+#resultsTable tbody tr:hover { background: var(--bg-card-2); }
+
+.outcome-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.outcome-standard { background: rgba(52, 211, 153, 0.2); color: var(--green); }
+.outcome-loading_mild { background: rgba(251, 191, 36, 0.2); color: var(--yellow); }
+.outcome-loading_moderate { background: rgba(251, 146, 60, 0.2); color: var(--orange); }
+.outcome-loading_high { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+.outcome-exclusion { background: rgba(107, 114, 128, 0.3); color: var(--gray); }
+.outcome-individual_consideration { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+.outcome-postpone { background: rgba(251, 146, 60, 0.3); color: var(--orange); }
+.outcome-decline { background: rgba(239, 68, 68, 0.4); color: var(--red); }
+
+.confidence-bar {
+  display: inline-block;
+  width: 80px;
+  height: 8px;
+  background: var(--bg-card-2);
+  border-radius: 4px;
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.disclaimer {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(251, 191, 36, 0.1);
+  border-left: 3px solid var(--yellow);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.history-panel {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 340px;
+  max-height: 70vh;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 99;
+  display: none;
+  overflow-y: auto;
+}
+
+.history-panel.open { display: block; }
+
+.history-panel h3 {
+  color: var(--accent);
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item {
+  background: var(--bg-card-2);
+  border-radius: 6px;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.history-item:hover { background: var(--border); }
+
+.history-item .h-name { color: var(--text); font-weight: 600; }
+.history-item .h-meta { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.2rem; }
+.history-item .h-outcome { color: var(--accent); font-size: 0.78rem; margin-top: 0.2rem; }
+
+footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+footer a { color: var(--accent-dim); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+.muted { color: var(--text-muted); font-size: 0.85rem; }
+
+/* ─── Review Summary (Step 3) ─── */
+#reviewSummary {
+  background: var(--bg-card-2);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+/* ─── Print / PDF Export Styles ─── */
+@media print {
+  body {
+    background: white;
+    color: black;
+    font-size: 11pt;
+  }
+
+  .container { max-width: 100%; padding: 0; }
+
+  .no-print, .wizard-nav, .step-indicator, footer, .result-actions, .history-panel {
+    display: none !important;
+  }
+
+  header {
+    border-bottom: 2px solid #000;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  h1 {
+    color: black;
+    font-size: 1.4rem;
+  }
+
+  .subtitle {
+    color: #333;
+    font-size: 0.85rem;
+  }
+
+  /* Print all 3 steps */
+  .step-pane {
+    display: block !important;
+    background: white !important;
+    border: 1px solid #999 !important;
+    color: black !important;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
+
+  .step-pane h2 {
+    color: black;
+    border-bottom: 1px solid #333;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  label, .muted, body, input, select, textarea {
+    color: black !important;
+  }
+
+  input, select {
+    background: white !important;
+    border: 1px solid #999 !important;
+  }
+
+  #resultsTable th {
+    color: black !important;
+    background: #eee !important;
+  }
+
+  #resultsTable td {
+    color: black !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  .outcome-badge {
+    border: 1px solid #333 !important;
+    color: black !important;
+    background: white !important;
+  }
+
+  .disclaimer {
+    background: white !important;
+    border-left: 2px solid #000 !important;
+    color: black !important;
+  }
+
+  /* Add report header when printing */
+  header::after {
+    content: "核保準入報告 | Insurance Pre-Underwriting Report | 生成日期: " var(--report-date);
+    display: block;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.5rem;
+    font-weight: normal;
+  }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 1rem; }
+  h1 { font-size: 1.4rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .step-indicator { flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem; }
+  .step { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+  .step-arrow { display: none; }
+  .step-label { display: none; }
+  .step-num { width: 24px; height: 24px; font-size: 0.85rem; }
+}
