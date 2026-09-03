@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>核保 CRM — Underwriting Comparison</title>
+  <link rel="stylesheet" href="styles.css?v=20260903-1740" />
+  <script src="../engine/rule-engine.js?v=20260903-1740"></script>
+  <script src="sample-rules.js?v=20260903-1740"></script>
+  <script src="disclaimer.js?v=20260903-1740"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌸 核保 CRM <span class="version">v1.5 prototype</span></h1>
+      <p class="subtitle">輸入客戶資料 → 即時比較 Sun Life / CTF 各 product 嘅核保決定</p>
+    </header>
+
+    <main>
+      <!-- ─── Step Indicator ─── -->
+      <div class="step-indicator">
+        <div class="step active" data-step="1">
+          <div class="step-num">1</div>
+          <div class="step-label">客戶資料</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-step="2">
+          <div class="step-num">2</div>
+          <div class="step-label">病史問卷</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-step="3">
+          <div class="step-num">3</div>
+          <div class="step-label">結果報告</div>
+        </div>
+      </div>
+
+      <!-- ─── Wizard Panes ─── -->
+      <div class="wizard">
+        <!-- Step 1: Client Profile -->
+        <section class="step-pane" data-step="1">
+          <h2>👤 Step 1 — 客戶基本資料</h2>
+          <div class="form-grid">
+            <label>
+              <span>姓名/編號</span>
+              <input type="text" id="clientName" placeholder="例：陳大文" />
+            </label>
+            <label>
+              <span>年齡</span>
+              <input type="number" id="age" min="0" max="100" value="40" />
+            </label>
+            <label>
+              <span>性別</span>
+              <select id="sex">
+                <option value="M">男</option>
+                <option value="F">女</option>
+              </select>
+            </label>
+            <label>
+              <span>身高 (cm)</span>
+              <input type="number" id="height_cm" min="50" max="250" value="170" />
+            </label>
+            <label>
+              <span>體重 (kg)</span>
+              <input type="number" id="weight_kg" min="10" max="300" value="70" />
+            </label>
+            <label>
+              <span>BMI（自動計算）</span>
+              <input type="text" id="bmi_display" disabled value="—" />
+            </label>
+            <label>
+              <span>吸煙</span>
+              <select id="smoker">
+                <option value="never">從不</option>
+                <option value="former">已戒</option>
+                <option value="current">現吸</option>
+              </select>
+            </label>
+            <label>
+              <span>居住地</span>
+              <select id="country">
+                <option value="HK">香港</option>
+                <option value="MO">澳門</option>
+                <option value="CN">中國內地</option>
+                <option value="OTHER">海外</option>
+              </select>
+            </label>
+            <label>
+              <span>簽約額 (HK$)</span>
+              <input type="number" id="sum_assured" min="0" value="1000000" />
+            </label>
+          </div>
+        </section>
+
+        <!-- Step 2: Conditions Checklist -->
+        <section class="step-pane" data-step="2" style="display:none">
+          <h2>🏥 Step 2 — 病史問卷</h2>
+          <p class="muted" style="margin-bottom:1rem;">剔選客戶有嘅病史，並填寫相關細節（年齡、控制程度、病程等）。</p>
+          <div id="conditionsContainer">
+            <p class="muted">載入條件中…</p>
+          </div>
+        </section>
+
+        <!-- Step 3: Review + Results -->
+        <section class="step-pane" data-step="3" style="display:none">
+          <h2>📊 Step 3 — 核保結果</h2>
+          <div id="reviewSummary" style="margin-bottom: 1rem;"></div>
+          <div id="resultsSummary"></div>
+          <table id="resultsTable">
+            <thead>
+              <tr>
+                <th>保險公司</th>
+                <th>最佳決定</th>
+                <th>最佳 product</th>
+                <th>接受率</th>
+                <th>加費 %</th>
+                <th>倍數</th>
+                <th>拒保 / 擱置</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="result-actions">
+            <button id="exportBtn" class="ghost" style="display:none">📋 複製結果 JSON</button>
+            <button id="printBtn" class="ghost" style="display:none">🖨️ 下載 PDF 報告</button>
+            <button id="historyBtn" class="ghost">📂 歷史記錄</button>
+          </div>
+          <div class="disclaimer">
+            ⚠️ <strong>免責聲明</strong>：本系統只供內部參考，實際核保決定以保險公司為準。
+            客戶資料屬機密，請遵守 PDPO 處理。
+          </div>
+        </section>
+
+        <!-- ─── Wizard Navigation ─── -->
+        <div class="wizard-nav no-print">
+          <button id="wizardPrev" class="ghost" style="display:none">← 上一步</button>
+          <button id="wizardNext" class="primary">下一步 →</button>
+          <button id="wizardCalc" class="primary" style="display:none">🔍 計算核保決定</button>
+          <button id="wizardReset" class="ghost">🔄 重新開始</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="no-print">
+      <p>🌸 Built by 小花 for Alan老闆 · 2026-09-03 · <a href="../docs/spec.md">Spec</a></p>
+    </footer>
+  </div>
+
+  <div class="history-panel no-print" id="historyPanel"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
