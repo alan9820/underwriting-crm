@@ -161,6 +161,7 @@ function renderConditions() {
 }
 
 // Chinese labels for common option codes (so dropdowns show Chinese text)
+// Format: show as "中文 (English)" so broker knows exactly which value
 const OPTION_LABELS_ZH = {
   // smoker
   'never': '從不',
@@ -173,14 +174,30 @@ const OPTION_LABELS_ZH = {
   'good': '良好',
   'fair': '一般',
   'poor': '差',
+  // severity (depression, anxiety, etc.)
+  'none': '無',
+  'mild': '輕度',
+  'moderate': '中度',
+  'severe': '重度',
+  'trivial': '極輕微',
+  'critical': '嚴重',
+  // asthma / lung severity
+  'intermittent': '間歇性',
+  'mild_persistent': '輕度持續',
+  'moderate_persistent': '中度持續',
+  'severe_persistent': '重度持續',
   // boolean
   '0': '否',
   '1': '是',
   'yes': '是',
   'no': '否',
+  'true': '是',
+  'false': '否',
   // sex
   'M': '男',
   'F': '女',
+  'male': '男',
+  'female': '女',
   // countries
   'HK': '香港',
   'MO': '澳門',
@@ -193,11 +210,50 @@ const OPTION_LABELS_ZH = {
   'sister': '姊妹',
   'son': '兒子',
   'daughter': '女兒',
+  'grandfather': '祖父/外祖父',
+  'grandmother': '祖母/外祖母',
   // treatment status
   'surgery': '已完成手術',
+  'completed': '已完成',
   'ongoing': '治療中',
-  'recovered': '已康復'
+  'recovered': '已康復',
+  'controlled': '已受控',
+  'uncontrolled': '未受控',
+  // valve regurgitation
+  'mitral': '二尖瓣',
+  'tricuspid': '三尖瓣',
+  'aortic': '主動脈瓣',
+  'pulmonary': '肺動脈瓣',
+  // surgery status
+  'repaired': '已修補',
+  'unrepaired': '未修補',
+  'closed': '已閉合',
+  'unclosed': '未閉合',
+  // size descriptors
+  'small': '小',
+  'medium': '中',
+  'large': '大',
+  'very_small': '好細',
+  'very_large': '好大',
+  // test result
+  'normal': '正常',
+  'abnormal': '異常',
+  'benign': '良性',
+  'malignant': '惡性',
+  'incon': '未能確定',
+  // follow-up status
+  'stable': '穩定',
+  'progressing': '惡化中',
+  'improving': '改善中',
+  'resolved': '已消退'
 };
+
+// Format an option code as "中文 (English)" if Chinese is known
+function formatOptionLabel(code) {
+  const zh = OPTION_LABELS_ZH[code];
+  if (zh) return zh + ' (' + code + ')';
+  return code;
+}
 
 function createConditionBlock(cond) {
   const block = document.createElement('div');
@@ -228,7 +284,7 @@ function createConditionBlock(cond) {
         (q.options || []).forEach(opt => {
           const o = document.createElement('option');
           o.value = opt;
-          o.textContent = OPTION_LABELS_ZH[opt] || opt;
+          o.textContent = formatOptionLabel(opt);
           input.appendChild(o);
         });
       } else if (q.type === 'number') {
