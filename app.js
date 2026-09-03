@@ -160,6 +160,45 @@ function renderConditions() {
   }
 }
 
+// Chinese labels for common option codes (so dropdowns show Chinese text)
+const OPTION_LABELS_ZH = {
+  // smoker
+  'never': '從不',
+  'former': '已戒',
+  'current': '現吸',
+  // diabetes type
+  'type1': '一型',
+  'type2': '二型',
+  // control
+  'good': '良好',
+  'fair': '一般',
+  'poor': '差',
+  // boolean
+  '0': '否',
+  '1': '是',
+  'yes': '是',
+  'no': '否',
+  // sex
+  'M': '男',
+  'F': '女',
+  // countries
+  'HK': '香港',
+  'MO': '澳門',
+  'CN': '中國內地',
+  'OTHER': '海外',
+  // relationships (family history)
+  'father': '父親',
+  'mother': '母親',
+  'brother': '兄弟',
+  'sister': '姊妹',
+  'son': '兒子',
+  'daughter': '女兒',
+  // treatment status
+  'surgery': '已完成手術',
+  'ongoing': '治療中',
+  'recovered': '已康復'
+};
+
 function createConditionBlock(cond) {
   const block = document.createElement('div');
   block.className = 'condition-block';
@@ -189,7 +228,7 @@ function createConditionBlock(cond) {
         (q.options || []).forEach(opt => {
           const o = document.createElement('option');
           o.value = opt;
-          o.textContent = opt;
+          o.textContent = OPTION_LABELS_ZH[opt] || opt;
           input.appendChild(o);
         });
       } else if (q.type === 'number') {
@@ -198,10 +237,10 @@ function createConditionBlock(cond) {
         input.step = 'any';
       } else if (q.type === 'boolean') {
         input = document.createElement('select');
-        ['否', '是'].forEach((o, i) => {
+        ['0', '1'].forEach(val => {
           const opt = document.createElement('option');
-          opt.value = i;
-          opt.textContent = o;
+          opt.value = val;
+          opt.textContent = OPTION_LABELS_ZH[val] || val;
           input.appendChild(opt);
         });
       } else {
